@@ -65,6 +65,7 @@ namespace SmartGear
                 if (weapon.IsForbidden(Faction.OfPlayer)) continue;
                 if (!weapon.def.IsWeapon) continue;
                 if (!weapon.def.IsRangedWeapon && !weapon.def.IsMeleeWeapon) continue;
+                if (weapon.def.IsStuff) continue; // Materials are not weapons
                 allWeapons.Add(weapon);
             }
 

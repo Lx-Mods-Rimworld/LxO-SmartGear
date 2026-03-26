@@ -127,9 +127,9 @@ namespace SmartGear
             bool isMelee = equipped.def.IsMeleeWeapon;
             bool isWeapon = equipped.def.IsWeapon;
 
-            if (!isRanged && !isMelee)
+            if (!isRanged && !isMelee || equipped.def.IsStuff)
             {
-                // This is NOT a real weapon -- remove it
+                // This is NOT a real weapon (or is a material like wood) -- remove it
                 SGDebug.Log("[SmartGear] WARN: BOGUS EQUIP on " + Pawn.LabelShort
                     + ": '" + equipped.def.defName + "' (label=" + equipped.def.label
                     + " IsWeapon=" + isWeapon
@@ -161,9 +161,10 @@ namespace SmartGear
             // Check map for weapons
             foreach (Thing thing in Pawn.Map.listerThings.ThingsInGroup(ThingRequestGroup.Weapon))
             {
-                // Only consider actual weapons, not items that happen to be in the weapon group
+                // Only consider actual weapons, not materials or items in the weapon group
                 if (!thing.def.IsWeapon) continue;
                 if (!thing.def.IsRangedWeapon && !thing.def.IsMeleeWeapon) continue;
+                if (thing.def.IsStuff) continue; // Wood, steel, etc. are not weapons
                 if (thing.IsForbidden(Pawn)) continue;
                 if (!Pawn.CanReserve(thing) || !Pawn.CanReach(thing, PathEndMode.ClosestTouch, Danger.Some)) continue;
                 if (thing.def.IsRangedWeapon && Pawn.WorkTagIsDisabled(WorkTags.Violent)) continue;

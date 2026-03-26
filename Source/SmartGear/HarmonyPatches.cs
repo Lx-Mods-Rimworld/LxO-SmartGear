@@ -85,17 +85,13 @@ namespace SmartGear
                 bool isMelee = newEq.def.IsMeleeWeapon;
                 bool isWeapon = newEq.def.IsWeapon;
 
-                if (!isRanged && !isMelee)
+                // Block materials (wood, steel, etc.) and non-weapons from being equipped
+                if (!isRanged && !isMelee || newEq.def.IsStuff)
                 {
-                    // BLOCK this equip -- it's not a real weapon
                     SGDebug.Log("[SmartGear] WARN: BLOCKED equip on " + pawn.LabelShort
                         + ": '" + newEq.def.defName + "' (label=" + newEq.def.label
-                        + " IsWeapon=" + isWeapon
-                        + " category=" + newEq.def.category
-                        + "). CurJob=" + (pawn.CurJob?.def?.defName ?? "none")
-                        + " JobDriver=" + (pawn.jobs?.curDriver?.GetType()?.Name ?? "none"));
-
-                    // Don't equip it -- return false to skip original method
+                        + " IsWeapon=" + isWeapon + " IsStuff=" + newEq.def.IsStuff
+                        + "). CurJob=" + (pawn.CurJob?.def?.defName ?? "none"));
                     return false;
                 }
 
