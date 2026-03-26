@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>スマートギア</SG_Tab>
+  <SG_TabTitle>スマートギア管理</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>検出された役割</SG_CurrentRole>
+  <SG_Role_Default>デフォルト</SG_Role_Default>
+  <SG_Role_Shooter>射撃手</SG_Role_Shooter>
+  <SG_Role_Brawler>格闘家</SG_Role_Brawler>
+  <SG_Role_Doctor>医者</SG_Role_Doctor>
+  <SG_Role_Hunter>狩人</SG_Role_Hunter>
+  <SG_Role_Worker>作業員</SG_Role_Worker>
+  <SG_Role_Pacifist>平和主義者</SG_Role_Pacifist>
+  <SG_Role>役割: {0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>現在の状況</SG_CurrentContext>
+  <SG_Context_Normal>通常</SG_Context_Normal>
+  <SG_Context_Combat>戦闘</SG_Context_Combat>
+  <SG_Context_Work>作業中</SG_Context_Work>
+  <SG_Context_Hunting>狩猟</SG_Context_Hunting>
+  <SG_Context_Cold>寒冷</SG_Context_Cold>
+  <SG_Context_Hot>酷暑</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>装備をロック（自動管理を無効化）</SG_LockGear>
+  <SG_LockGear_Desc>スマートギアがこの入植者の装備を変更するのを防ぎます。手動で管理したい場合に使用してください。</SG_LockGear_Desc>
+  <SG_OverrideRole>検出された役割を上書き</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>メイン武器</SG_PrimaryWeapon>
+  <SG_Sidearm>サブ武器</SG_Sidearm>
+  <SG_Medicine>携帯医薬品</SG_Medicine>
+  <SG_None>なし</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>スマートギアを有効化</SG_Enabled>
+  <SG_AutoSystems>自動管理システム:</SG_AutoSystems>
+  <SG_AutoWeapons>最適な武器を自動装備</SG_AutoWeapons>
+  <SG_AutoApparel>最適な衣服を自動装備</SG_AutoApparel>
+  <SG_AutoInventory>インベントリを自動管理（医薬品）</SG_AutoInventory>
+  <SG_Sidearms>サブ武器を有効化</SG_Sidearms>
+
+  <SG_Context>状況切替:</SG_Context>
+  <SG_CombatSwitch>徴兵時に戦闘装備に切替</SG_CombatSwitch>
+  <SG_HuntingWeapon>狩猟任務に狩猟武器を使用</SG_HuntingWeapon>
+  <SG_TemperatureAware>気温に応じた衣服選択</SG_TemperatureAware>
+  <SG_JobAwareApparel>作業に最適化された衣服</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>サブ武器設定:</SG_SidearmSettings>
+  <SG_AutoMelee>近接戦闘時に近接サブ武器を自動抜刀</SG_AutoMelee>
+  <SG_CarryMedicine>医者と衛生兵が医薬品を携帯</SG_CarryMedicine>
+  <SG_MedicineCount>携帯する医薬品の数</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>アップグレード閾値（交換に必要な最低改善値）</SG_UpgradeThreshold>
+
+</LanguageData>

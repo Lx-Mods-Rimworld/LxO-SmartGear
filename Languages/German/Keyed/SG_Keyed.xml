@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>Smart Gear</SG_Tab>
+  <SG_TabTitle>Smart Gear Verwaltung</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>Erkannte Rolle</SG_CurrentRole>
+  <SG_Role_Default>Standard</SG_Role_Default>
+  <SG_Role_Shooter>Schütze</SG_Role_Shooter>
+  <SG_Role_Brawler>Nahkämpfer</SG_Role_Brawler>
+  <SG_Role_Doctor>Arzt</SG_Role_Doctor>
+  <SG_Role_Hunter>Jäger</SG_Role_Hunter>
+  <SG_Role_Worker>Arbeiter</SG_Role_Worker>
+  <SG_Role_Pacifist>Pazifist</SG_Role_Pacifist>
+  <SG_Role>Rolle: {0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>Aktueller Kontext</SG_CurrentContext>
+  <SG_Context_Normal>Normal</SG_Context_Normal>
+  <SG_Context_Combat>Kampf</SG_Context_Combat>
+  <SG_Context_Work>Arbeit</SG_Context_Work>
+  <SG_Context_Hunting>Jagd</SG_Context_Hunting>
+  <SG_Context_Cold>Kaltes Wetter</SG_Context_Cold>
+  <SG_Context_Hot>Heißes Wetter</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>Ausrüstung sperren (Auto-Verwaltung deaktivieren)</SG_LockGear>
+  <SG_LockGear_Desc>Verhindert, dass Smart Gear die Ausrüstung dieses Kolonisten ändert. Verwende dies für manuelle Kontrolle.</SG_LockGear_Desc>
+  <SG_OverrideRole>Erkannte Rolle überschreiben</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>Hauptwaffe</SG_PrimaryWeapon>
+  <SG_Sidearm>Zweitwaffe</SG_Sidearm>
+  <SG_Medicine>Mitgeführte Medizin</SG_Medicine>
+  <SG_None>Keine</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>Smart Gear aktivieren</SG_Enabled>
+  <SG_AutoSystems>Auto-Verwaltungssysteme:</SG_AutoSystems>
+  <SG_AutoWeapons>Beste Waffe automatisch ausrüsten</SG_AutoWeapons>
+  <SG_AutoApparel>Beste Kleidung automatisch ausrüsten</SG_AutoApparel>
+  <SG_AutoInventory>Inventar automatisch verwalten (Medizin)</SG_AutoInventory>
+  <SG_Sidearms>Zweitwaffen aktivieren</SG_Sidearms>
+
+  <SG_Context>Kontextwechsel:</SG_Context>
+  <SG_CombatSwitch>Kampfausrüstung beim Einziehen</SG_CombatSwitch>
+  <SG_HuntingWeapon>Jagdwaffe für Jagdaufträge</SG_HuntingWeapon>
+  <SG_TemperatureAware>Temperaturbewusste Kleidung</SG_TemperatureAware>
+  <SG_JobAwareApparel>Arbeitsoptimierte Kleidung</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>Zweitwaffen-Einstellungen:</SG_SidearmSettings>
+  <SG_AutoMelee>Nahkampfwaffe automatisch ziehen im Nahkampf</SG_AutoMelee>
+  <SG_CarryMedicine>Ärzte und Sanitäter tragen Medizin</SG_CarryMedicine>
+  <SG_MedicineCount>Mitzuführende Medizin</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>Aufwertungsschwelle (Mindestverbesserung zum Wechseln)</SG_UpgradeThreshold>
+
+</LanguageData>

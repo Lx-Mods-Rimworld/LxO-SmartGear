@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>智能装备</SG_Tab>
+  <SG_TabTitle>智能装备管理器</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>检测到的角色</SG_CurrentRole>
+  <SG_Role_Default>默认</SG_Role_Default>
+  <SG_Role_Shooter>射手</SG_Role_Shooter>
+  <SG_Role_Brawler>近战者</SG_Role_Brawler>
+  <SG_Role_Doctor>医生</SG_Role_Doctor>
+  <SG_Role_Hunter>猎人</SG_Role_Hunter>
+  <SG_Role_Worker>工人</SG_Role_Worker>
+  <SG_Role_Pacifist>和平主义者</SG_Role_Pacifist>
+  <SG_Role>角色：{0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>当前情境</SG_CurrentContext>
+  <SG_Context_Normal>正常</SG_Context_Normal>
+  <SG_Context_Combat>战斗</SG_Context_Combat>
+  <SG_Context_Work>工作中</SG_Context_Work>
+  <SG_Context_Hunting>狩猎</SG_Context_Hunting>
+  <SG_Context_Cold>寒冷天气</SG_Context_Cold>
+  <SG_Context_Hot>炎热天气</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>锁定装备（禁用自动管理）</SG_LockGear>
+  <SG_LockGear_Desc>阻止智能装备更换该殖民者的装备。当你想要手动控制时使用此选项。</SG_LockGear_Desc>
+  <SG_OverrideRole>覆盖检测到的角色</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>主武器</SG_PrimaryWeapon>
+  <SG_Sidearm>副武器</SG_Sidearm>
+  <SG_Medicine>携带的药品</SG_Medicine>
+  <SG_None>无</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>启用智能装备</SG_Enabled>
+  <SG_AutoSystems>自动管理系统：</SG_AutoSystems>
+  <SG_AutoWeapons>自动装备最佳武器</SG_AutoWeapons>
+  <SG_AutoApparel>自动装备最佳服装</SG_AutoApparel>
+  <SG_AutoInventory>自动管理物品栏（药品）</SG_AutoInventory>
+  <SG_Sidearms>启用副武器</SG_Sidearms>
+
+  <SG_Context>情境切换：</SG_Context>
+  <SG_CombatSwitch>征召时切换战斗装备</SG_CombatSwitch>
+  <SG_HuntingWeapon>狩猎任务使用狩猎武器</SG_HuntingWeapon>
+  <SG_TemperatureAware>温度感知服装</SG_TemperatureAware>
+  <SG_JobAwareApparel>工作优化服装</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>副武器设置：</SG_SidearmSettings>
+  <SG_AutoMelee>近战时自动拔出近战副武器</SG_AutoMelee>
+  <SG_CarryMedicine>医生和医护人员携带药品</SG_CarryMedicine>
+  <SG_MedicineCount>携带药品数量</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>升级阈值（更换所需的最低提升）</SG_UpgradeThreshold>
+
+</LanguageData>

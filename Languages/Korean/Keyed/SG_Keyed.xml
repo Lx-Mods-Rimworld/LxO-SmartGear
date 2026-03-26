@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>스마트 장비</SG_Tab>
+  <SG_TabTitle>스마트 장비 관리자</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>감지된 역할</SG_CurrentRole>
+  <SG_Role_Default>기본</SG_Role_Default>
+  <SG_Role_Shooter>사수</SG_Role_Shooter>
+  <SG_Role_Brawler>근접 전투원</SG_Role_Brawler>
+  <SG_Role_Doctor>의사</SG_Role_Doctor>
+  <SG_Role_Hunter>사냥꾼</SG_Role_Hunter>
+  <SG_Role_Worker>작업자</SG_Role_Worker>
+  <SG_Role_Pacifist>평화주의자</SG_Role_Pacifist>
+  <SG_Role>역할: {0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>현재 상황</SG_CurrentContext>
+  <SG_Context_Normal>일반</SG_Context_Normal>
+  <SG_Context_Combat>전투</SG_Context_Combat>
+  <SG_Context_Work>작업 중</SG_Context_Work>
+  <SG_Context_Hunting>사냥</SG_Context_Hunting>
+  <SG_Context_Cold>추운 날씨</SG_Context_Cold>
+  <SG_Context_Hot>더운 날씨</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>장비 잠금 (자동 관리 비활성화)</SG_LockGear>
+  <SG_LockGear_Desc>스마트 장비가 이 식민자의 장비를 변경하지 못하게 합니다. 수동으로 관리하려면 이 옵션을 사용하세요.</SG_LockGear_Desc>
+  <SG_OverrideRole>감지된 역할 덮어쓰기</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>주무기</SG_PrimaryWeapon>
+  <SG_Sidearm>보조 무기</SG_Sidearm>
+  <SG_Medicine>휴대 약품</SG_Medicine>
+  <SG_None>없음</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>스마트 장비 활성화</SG_Enabled>
+  <SG_AutoSystems>자동 관리 시스템:</SG_AutoSystems>
+  <SG_AutoWeapons>최적 무기 자동 장착</SG_AutoWeapons>
+  <SG_AutoApparel>최적 의복 자동 장착</SG_AutoApparel>
+  <SG_AutoInventory>인벤토리 자동 관리 (약품)</SG_AutoInventory>
+  <SG_Sidearms>보조 무기 활성화</SG_Sidearms>
+
+  <SG_Context>상황 전환:</SG_Context>
+  <SG_CombatSwitch>징집 시 전투 장비로 전환</SG_CombatSwitch>
+  <SG_HuntingWeapon>사냥 작업에 사냥 무기 사용</SG_HuntingWeapon>
+  <SG_TemperatureAware>기온 인식 의복</SG_TemperatureAware>
+  <SG_JobAwareApparel>작업 최적화 의복</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>보조 무기 설정:</SG_SidearmSettings>
+  <SG_AutoMelee>근접전에서 근접 보조 무기 자동 발도</SG_AutoMelee>
+  <SG_CarryMedicine>의사와 의무병이 약품 휴대</SG_CarryMedicine>
+  <SG_MedicineCount>휴대할 약품 수</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>업그레이드 기준치 (교체에 필요한 최소 개선치)</SG_UpgradeThreshold>
+
+</LanguageData>

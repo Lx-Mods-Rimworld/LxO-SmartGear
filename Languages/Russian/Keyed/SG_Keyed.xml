@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>Умная экипировка</SG_Tab>
+  <SG_TabTitle>Управление умной экипировкой</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>Обнаруженная роль</SG_CurrentRole>
+  <SG_Role_Default>По умолчанию</SG_Role_Default>
+  <SG_Role_Shooter>Стрелок</SG_Role_Shooter>
+  <SG_Role_Brawler>Рукопашник</SG_Role_Brawler>
+  <SG_Role_Doctor>Врач</SG_Role_Doctor>
+  <SG_Role_Hunter>Охотник</SG_Role_Hunter>
+  <SG_Role_Worker>Рабочий</SG_Role_Worker>
+  <SG_Role_Pacifist>Пацифист</SG_Role_Pacifist>
+  <SG_Role>Роль: {0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>Текущий контекст</SG_CurrentContext>
+  <SG_Context_Normal>Обычный</SG_Context_Normal>
+  <SG_Context_Combat>Бой</SG_Context_Combat>
+  <SG_Context_Work>Работа</SG_Context_Work>
+  <SG_Context_Hunting>Охота</SG_Context_Hunting>
+  <SG_Context_Cold>Холодная погода</SG_Context_Cold>
+  <SG_Context_Hot>Жаркая погода</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>Заблокировать экипировку (отключить автоуправление)</SG_LockGear>
+  <SG_LockGear_Desc>Запрещает Smart Gear менять экипировку этого колониста. Используйте для ручного управления.</SG_LockGear_Desc>
+  <SG_OverrideRole>Переопределить обнаруженную роль</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>Основное оружие</SG_PrimaryWeapon>
+  <SG_Sidearm>Дополнительное оружие</SG_Sidearm>
+  <SG_Medicine>Медикаменты при себе</SG_Medicine>
+  <SG_None>Нет</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>Включить Smart Gear</SG_Enabled>
+  <SG_AutoSystems>Системы автоуправления:</SG_AutoSystems>
+  <SG_AutoWeapons>Автоматически экипировать лучшее оружие</SG_AutoWeapons>
+  <SG_AutoApparel>Автоматически экипировать лучшую одежду</SG_AutoApparel>
+  <SG_AutoInventory>Автоуправление инвентарём (медикаменты)</SG_AutoInventory>
+  <SG_Sidearms>Включить дополнительное оружие</SG_Sidearms>
+
+  <SG_Context>Переключение контекста:</SG_Context>
+  <SG_CombatSwitch>Боевая экипировка при призыве</SG_CombatSwitch>
+  <SG_HuntingWeapon>Охотничье оружие для заданий охоты</SG_HuntingWeapon>
+  <SG_TemperatureAware>Одежда с учётом температуры</SG_TemperatureAware>
+  <SG_JobAwareApparel>Одежда, оптимизированная для работы</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>Настройки дополнительного оружия:</SG_SidearmSettings>
+  <SG_AutoMelee>Автоматически доставать ближнее оружие в рукопашной</SG_AutoMelee>
+  <SG_CarryMedicine>Врачи и медики носят медикаменты</SG_CarryMedicine>
+  <SG_MedicineCount>Количество медикаментов</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>Порог улучшения (минимальное улучшение для замены)</SG_UpgradeThreshold>
+
+</LanguageData>

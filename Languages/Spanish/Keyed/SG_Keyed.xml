@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>Equipo Inteligente</SG_Tab>
+  <SG_TabTitle>Gestor de Equipo Inteligente</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>Rol detectado</SG_CurrentRole>
+  <SG_Role_Default>Predeterminado</SG_Role_Default>
+  <SG_Role_Shooter>Tirador</SG_Role_Shooter>
+  <SG_Role_Brawler>Luchador</SG_Role_Brawler>
+  <SG_Role_Doctor>Médico</SG_Role_Doctor>
+  <SG_Role_Hunter>Cazador</SG_Role_Hunter>
+  <SG_Role_Worker>Trabajador</SG_Role_Worker>
+  <SG_Role_Pacifist>Pacifista</SG_Role_Pacifist>
+  <SG_Role>Rol: {0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>Contexto actual</SG_CurrentContext>
+  <SG_Context_Normal>Normal</SG_Context_Normal>
+  <SG_Context_Combat>Combate</SG_Context_Combat>
+  <SG_Context_Work>Trabajando</SG_Context_Work>
+  <SG_Context_Hunting>Cazando</SG_Context_Hunting>
+  <SG_Context_Cold>Clima frío</SG_Context_Cold>
+  <SG_Context_Hot>Clima caluroso</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>Bloquear equipo (desactivar gestión automática)</SG_LockGear>
+  <SG_LockGear_Desc>Impide que Equipo Inteligente cambie el equipamiento de este colono. Úsalo cuando quieras control manual.</SG_LockGear_Desc>
+  <SG_OverrideRole>Anular rol detectado</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>Arma principal</SG_PrimaryWeapon>
+  <SG_Sidearm>Arma secundaria</SG_Sidearm>
+  <SG_Medicine>Medicina portada</SG_Medicine>
+  <SG_None>Ninguno</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>Activar Equipo Inteligente</SG_Enabled>
+  <SG_AutoSystems>Sistemas de gestión automática:</SG_AutoSystems>
+  <SG_AutoWeapons>Equipar automáticamente la mejor arma</SG_AutoWeapons>
+  <SG_AutoApparel>Equipar automáticamente la mejor ropa</SG_AutoApparel>
+  <SG_AutoInventory>Gestionar inventario automáticamente (medicina)</SG_AutoInventory>
+  <SG_Sidearms>Activar armas secundarias</SG_Sidearms>
+
+  <SG_Context>Cambio de contexto:</SG_Context>
+  <SG_CombatSwitch>Equipo de combate al reclutar</SG_CombatSwitch>
+  <SG_HuntingWeapon>Arma de caza para trabajos de caza</SG_HuntingWeapon>
+  <SG_TemperatureAware>Ropa según la temperatura</SG_TemperatureAware>
+  <SG_JobAwareApparel>Ropa optimizada para el trabajo</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>Configuración de armas secundarias:</SG_SidearmSettings>
+  <SG_AutoMelee>Desenfundar arma cuerpo a cuerpo automáticamente en combate cercano</SG_AutoMelee>
+  <SG_CarryMedicine>Médicos y sanitarios llevan medicina</SG_CarryMedicine>
+  <SG_MedicineCount>Cantidad de medicina a llevar</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>Umbral de mejora (mejora mínima para cambiar)</SG_UpgradeThreshold>
+
+</LanguageData>

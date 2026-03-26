@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <!-- Comp is added via C# in HarmonyInit for maximum compatibility -->
+  <!-- ITab is also added via C# -->
+</Patch>

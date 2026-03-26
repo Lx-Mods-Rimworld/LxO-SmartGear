@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+
+  <!-- Tab -->
+  <SG_Tab>Smart Gear</SG_Tab>
+  <SG_TabTitle>Smart Gear Manager</SG_TabTitle>
+
+  <!-- Roles -->
+  <SG_CurrentRole>Detected Role</SG_CurrentRole>
+  <SG_Role_Default>Default</SG_Role_Default>
+  <SG_Role_Shooter>Shooter</SG_Role_Shooter>
+  <SG_Role_Brawler>Brawler</SG_Role_Brawler>
+  <SG_Role_Doctor>Doctor</SG_Role_Doctor>
+  <SG_Role_Hunter>Hunter</SG_Role_Hunter>
+  <SG_Role_Worker>Worker</SG_Role_Worker>
+  <SG_Role_Pacifist>Pacifist</SG_Role_Pacifist>
+  <SG_Role>Role: {0}</SG_Role>
+
+  <!-- Context -->
+  <SG_CurrentContext>Current Context</SG_CurrentContext>
+  <SG_Context_Normal>Normal</SG_Context_Normal>
+  <SG_Context_Combat>Combat</SG_Context_Combat>
+  <SG_Context_Work>Working</SG_Context_Work>
+  <SG_Context_Hunting>Hunting</SG_Context_Hunting>
+  <SG_Context_Cold>Cold Weather</SG_Context_Cold>
+  <SG_Context_Hot>Hot Weather</SG_Context_Hot>
+
+  <!-- Tab controls -->
+  <SG_LockGear>Lock gear (disable auto-management)</SG_LockGear>
+  <SG_LockGear_Desc>Prevent Smart Gear from changing this pawn's equipment. Use when you want manual control.</SG_LockGear_Desc>
+  <SG_OverrideRole>Override detected role</SG_OverrideRole>
+
+  <!-- Gear display -->
+  <SG_PrimaryWeapon>Primary Weapon</SG_PrimaryWeapon>
+  <SG_Sidearm>Sidearm</SG_Sidearm>
+  <SG_Medicine>Medicine carried</SG_Medicine>
+  <SG_None>None</SG_None>
+
+  <!-- Settings -->
+  <SG_Enabled>Enable Smart Gear</SG_Enabled>
+  <SG_AutoSystems>Auto-management systems:</SG_AutoSystems>
+  <SG_AutoWeapons>Auto-equip best weapon</SG_AutoWeapons>
+  <SG_AutoApparel>Auto-equip best apparel</SG_AutoApparel>
+  <SG_AutoInventory>Auto-manage inventory (medicine)</SG_AutoInventory>
+  <SG_Sidearms>Enable sidearms</SG_Sidearms>
+
+  <SG_Context>Context switching:</SG_Context>
+  <SG_CombatSwitch>Combat gear on draft</SG_CombatSwitch>
+  <SG_HuntingWeapon>Hunting weapon for hunting jobs</SG_HuntingWeapon>
+  <SG_TemperatureAware>Temperature-aware clothing</SG_TemperatureAware>
+  <SG_JobAwareApparel>Job-optimized apparel</SG_JobAwareApparel>
+
+  <SG_SidearmSettings>Sidearm settings:</SG_SidearmSettings>
+  <SG_AutoMelee>Auto-draw melee sidearm in close combat</SG_AutoMelee>
+  <SG_CarryMedicine>Doctors and medics carry medicine</SG_CarryMedicine>
+  <SG_MedicineCount>Medicine to carry</SG_MedicineCount>
+
+  <SG_UpgradeThreshold>Upgrade threshold (minimum improvement to swap)</SG_UpgradeThreshold>
+
+</LanguageData>

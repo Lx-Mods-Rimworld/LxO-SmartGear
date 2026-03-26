@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>LxO - Smart Gear</name>
+  <author>Lexxers</author>
+  <url>https://github.com/Lx-Mods-Rimworld/LxO-SmartGear</url>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <packageId>Lexxers.SmartGear</packageId>
+  <description>Intelligent automatic equipment management. Pawns equip the right weapon, wear the right clothes, and carry the right supplies -- based on their role, current job, weather, and combat status.
+
+Zero configuration needed. Works out of the box. Every pawn auto-detects their role from skills and traits.
+
+Drafted? Combat gear. Hunting? Hunting rifle. Cold snap? Parka. Doctor? Carries medicine. Melee attacker in your face? Draws sidearm knife.
+
+Compatible with most mods. Safe to add mid-save.</description>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+    </li>
+  </modDependencies>
+  <loadAfter>
+    <li>brrainz.harmony</li>
+    <li>ludeon.rimworld</li>
+  </loadAfter>
+</ModMetaData>
