@@ -2,6 +2,17 @@
 
 All notable changes to this mod will be documented in this file.
 
+## [1.1.0] - 2026-03-26
+
+### Features
+- Slaves get auto-managed gear but with lower weapon priority. Colonists pick first, slaves get what's left. No sidearms for slaves.
+- Children (Biotech DLC): apparel management only. No weapons, sidearms, or medicine assigned to children.
+- Excess medicine is now automatically dropped if pawn carries more than the setting allows.
+
+### Fixes
+- Guests, visitors, and quest lodgers no longer receive auto-equipped weapons, apparel, or medicine (reported by @Idzanak)
+- Materials like wood and steel can no longer be equipped as melee weapons. Added robust material detection.
+
 ## [1.0.1] - 2026-03-26
 
 ### Fixes
