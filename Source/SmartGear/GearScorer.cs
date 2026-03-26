@@ -21,6 +21,17 @@ namespace SmartGear
         {
             if (weapon?.def == null) return -1000f;
 
+            // Biocoded / persona / bladelink weapons: locked to a specific pawn
+            // CompBladelinkWeapon inherits CompBiocodable, so one check covers both
+            var biocomp = weapon.TryGetComp<CompBiocodable>();
+            if (biocomp != null && biocomp.Biocoded)
+            {
+                if (biocomp.CodedPawn == pawn)
+                    return 9000f; // This weapon belongs to this pawn -- always keep
+                else
+                    return -9000f; // Coded to someone else -- never equip
+            }
+
             float score = 0f;
             bool wantsMelee = RoleDetector.PrefersMelee(role);
             bool isMelee = weapon.def.IsMeleeWeapon;

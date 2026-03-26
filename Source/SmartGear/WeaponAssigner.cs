@@ -139,6 +139,13 @@ namespace SmartGear
                 // Already have the right weapon
                 if (currentWeapon == targetWeapon) continue;
 
+                // Never swap away biocoded or persona weapons
+                if (currentWeapon != null)
+                {
+                    var bio = currentWeapon.TryGetComp<CompBiocodable>();
+                    if (bio != null && bio.Biocoded && bio.CodedPawn == pawn) continue;
+                }
+
                 var comp = pawn.GetComp<CompGearManager>();
                 Role role = comp?.CurrentRole ?? Role.Default;
                 GearContext context = ContextDetector.GetContext(pawn);
