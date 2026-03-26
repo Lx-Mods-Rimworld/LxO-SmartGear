@@ -67,6 +67,9 @@ namespace SmartGear
 
             try
             {
+                // SAFETY CHECK: detect and fix non-weapon items in equipment slot
+                FixBogusEquipment();
+
                 GearContext context = ContextDetector.GetContext(Pawn);
                 Role role = CurrentRole;
 
@@ -106,6 +109,29 @@ namespace SmartGear
                 Log.ErrorOnce("[SmartGear] Error evaluating gear for " + Pawn.LabelShort + ": " + ex.Message,
                     Pawn.thingIDNumber ^ 0x5347);
             }
+        }
+
+        // ===================== BOGUS EQUIPMENT FIX =====================
+
+        /// <summary>
+        /// Detect if the pawn has a non-weapon item (wood, steel, food, etc.) in their
+        /// equipment slot and remove it. This can happen from hauling/inventory bugs.
+        /// </summary>
+        private void FixBogusEquipment()
+        {
+            ThingWithComps equipped = Pawn.equipment?.Primary;
+            if (equipped == null) return;
+
+            // A real weapon is either ranged or melee weapon by def
+            bool isRealWeapon = equipped.def.IsRangedWeapon || equipped.def.IsMeleeWeapon;
+            if (isRealWeapon) return;
+
+            // This is NOT a real weapon (wood, steel, food, etc.) -- remove it
+            Log.Warning("[SmartGear] " + Pawn.LabelShort + " has bogus equipment: "
+                + equipped.def.label + ". Removing and dropping.");
+
+            ThingWithComps dropped;
+            Pawn.equipment.TryDropEquipment(equipped, out dropped, Pawn.Position, false);
         }
 
         // ===================== WEAPONS =====================
