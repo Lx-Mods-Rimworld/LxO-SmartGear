@@ -130,7 +130,7 @@ namespace SmartGear
             if (!isRanged && !isMelee)
             {
                 // This is NOT a real weapon -- remove it
-                Log.Warning("[SmartGear] BOGUS EQUIP on " + Pawn.LabelShort
+                SGDebug.Log("[SmartGear] WARN: BOGUS EQUIP on " + Pawn.LabelShort
                     + ": '" + equipped.def.defName + "' (label=" + equipped.def.label
                     + " IsWeapon=" + isWeapon
                     + " IsRanged=" + isRanged
@@ -182,7 +182,7 @@ namespace SmartGear
 
             if (bestWeapon != null && bestWeapon != currentWeapon)
             {
-                Log.Message("[SmartGear] " + Pawn.LabelShort + " EvaluateWeapon: equipping '"
+                SGDebug.Log("[SmartGear] " + Pawn.LabelShort + " EvaluateWeapon: equipping '"
                     + bestWeapon.def.defName + "' (IsRanged=" + bestWeapon.def.IsRangedWeapon
                     + " IsMelee=" + bestWeapon.def.IsMeleeWeapon
                     + " score=" + bestScore.ToString("F0") + ")");
@@ -300,7 +300,7 @@ namespace SmartGear
 
             if (bestMed != null)
             {
-                Log.Message("[SmartGear] " + Pawn.LabelShort + " picking up " + needed
+                SGDebug.Log("[SmartGear] " + Pawn.LabelShort + " picking up " + needed
                     + "x " + bestMed.def.label + " (has " + medsInInventory + "/" + SGSettings.medicineCount + ")");
                 var job = JobMaker.MakeJob(JobDefOf.TakeCountToInventory, bestMed);
                 job.count = Math.Min(needed, bestMed.stackCount);

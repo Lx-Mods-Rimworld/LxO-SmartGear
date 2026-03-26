@@ -43,7 +43,7 @@ namespace SmartGear
                     }
                 }
 
-                Log.Message("[SmartGear] Initialized. Patches applied, comp + tab added to humanlike pawns.");
+                SGDebug.Log("[SmartGear] Initialized. Patches applied, comp + tab added to humanlike pawns.");
             }
             catch (Exception ex)
             {
@@ -88,7 +88,7 @@ namespace SmartGear
                 if (!isRanged && !isMelee)
                 {
                     // BLOCK this equip -- it's not a real weapon
-                    Log.Warning("[SmartGear] BLOCKED equip on " + pawn.LabelShort
+                    SGDebug.Log("[SmartGear] WARN: BLOCKED equip on " + pawn.LabelShort
                         + ": '" + newEq.def.defName + "' (label=" + newEq.def.label
                         + " IsWeapon=" + isWeapon
                         + " category=" + newEq.def.category
@@ -99,7 +99,7 @@ namespace SmartGear
                     return false;
                 }
 
-                Log.Message("[SmartGear] Equip on " + pawn.LabelShort + ": '"
+                SGDebug.Log("[SmartGear] Equip on " + pawn.LabelShort + ": '"
                     + newEq.def.defName + "' (ranged=" + isRanged + " melee=" + isMelee + ")");
             }
             catch (Exception) { }
