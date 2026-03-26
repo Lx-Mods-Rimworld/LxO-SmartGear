@@ -209,6 +209,10 @@ namespace SmartGear
         {
             if (!SGSettings.carryMedicine) return;
 
+            // Don't interrupt current job to grab medicine
+            if (Pawn.CurJob != null && Pawn.CurJob.def == JobDefOf.TakeCountToInventory)
+                return;
+
             // Doctors and fighters with medicine skill should carry medicine
             bool shouldCarryMeds = role == Role.Doctor
                 || (Pawn.skills?.GetSkill(SkillDefOf.Medicine)?.Level >= 4
@@ -224,20 +228,30 @@ namespace SmartGear
                     medsInInventory += item.stackCount;
             }
 
+            // Also count medicine being carried in hands
+            if (Pawn.carryTracker?.CarriedThing?.def?.IsMedicine == true)
+                medsInInventory += Pawn.carryTracker.CarriedThing.stackCount;
+
             if (medsInInventory >= SGSettings.medicineCount) return;
 
-            // Find medicine to pick up
+            // Don't pick up medicine we already have enough of
             int needed = SGSettings.medicineCount - medsInInventory;
+            if (needed <= 0) return;
+
+            // Find medicine to pick up (not from our own inventory)
             Thing bestMed = GenClosest.ClosestThingReachable(
                 Pawn.Position, Pawn.Map,
                 ThingRequest.ForGroup(ThingRequestGroup.Medicine),
                 PathEndMode.ClosestTouch,
                 TraverseParms.For(Pawn),
-                30f, // Don't walk too far for medicine
-                t => !t.IsForbidden(Pawn) && Pawn.CanReserve(t) && t.stackCount > 0);
+                30f,
+                t => !t.IsForbidden(Pawn) && Pawn.CanReserve(t) && t.stackCount > 0
+                    && !Pawn.inventory.innerContainer.Contains(t));
 
             if (bestMed != null)
             {
+                Log.Message("[SmartGear] " + Pawn.LabelShort + " picking up " + needed
+                    + "x " + bestMed.def.label + " (has " + medsInInventory + "/" + SGSettings.medicineCount + ")");
                 var job = JobMaker.MakeJob(JobDefOf.TakeCountToInventory, bestMed);
                 job.count = Math.Min(needed, bestMed.stackCount);
                 Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
