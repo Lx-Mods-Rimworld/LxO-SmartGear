@@ -124,8 +124,11 @@ namespace SmartGear
             // Check map for weapons
             foreach (Thing thing in Pawn.Map.listerThings.ThingsInGroup(ThingRequestGroup.Weapon))
             {
+                // Only consider actual weapons, not items that happen to be in the weapon group
+                if (!thing.def.IsWeapon) continue;
+                if (!thing.def.IsRangedWeapon && !thing.def.IsMeleeWeapon) continue;
                 if (thing.IsForbidden(Pawn)) continue;
-                if (!Pawn.CanReserve(thing) && Pawn.CanReach(thing, PathEndMode.ClosestTouch, Danger.Some)) continue;
+                if (!Pawn.CanReserve(thing) || !Pawn.CanReach(thing, PathEndMode.ClosestTouch, Danger.Some)) continue;
                 if (thing.def.IsRangedWeapon && Pawn.WorkTagIsDisabled(WorkTags.Violent)) continue;
                 if (thing.def.IsMeleeWeapon && Pawn.WorkTagIsDisabled(WorkTags.Violent)) continue;
 
