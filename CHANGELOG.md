@@ -2,6 +2,14 @@
 
 All notable changes to this mod will be documented in this file.
 
+## [1.0.1] - 2026-03-26
+
+### Fixes
+- Fixed an error when pawns die: gear manager no longer runs on corpses.
+
+### Improvements
+- All debug logging is now conditional on LxDebug mod being active. Zero performance overhead for normal users.
+
 ## [1.0.0] - 2026-03-26
 
 ### Features
