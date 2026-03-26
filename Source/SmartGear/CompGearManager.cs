@@ -451,6 +451,7 @@ namespace SmartGear
 
         public override string CompInspectStringExtra()
         {
+            if (!(parent is Pawn)) return null;
             if (!SGSettings.enabled || Pawn.Dead) return null;
             return "SG_Role".Translate(CurrentRole.ToString());
         }
