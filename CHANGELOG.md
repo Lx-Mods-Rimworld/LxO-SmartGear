@@ -2,6 +2,15 @@
 
 All notable changes to this mod will be documented in this file.
 
+## [1.1.1] - 2026-03-27
+
+### Fixes
+- Biocoded and persona/bladelink weapons are never swapped away. Bonded weapons score maximum for their owner, minimum for everyone else. (reported by @Idzanak)
+- Weapon durability now affects scoring. Nearly-broken weapons are deprioritized.
+- Gender-restricted apparel is now checked before equipping.
+- Locked apparel (slave collars, straps) is never removed by auto-equip.
+- Biocoded apparel on the map is skipped if coded to another pawn.
+
 ## [1.1.0] - 2026-03-26
 
 ### Features
