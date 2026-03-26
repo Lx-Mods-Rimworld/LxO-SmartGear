@@ -74,9 +74,18 @@ namespace SmartGear
                 bool contextChanged = context != lastContext;
                 lastContext = context;
 
-                // Evaluate and swap gear
-                // Weapons are handled colony-wide by MapComponent_WeaponAssigner
-                // Only per-pawn weapon evaluation on context change (combat/hunting)
+                // Drafted = player has manual control. Don't interfere with gear.
+                // Only sidearm auto-draw in melee is allowed (survival reflex).
+                if (Pawn.Drafted)
+                {
+                    if (SGSettings.sidearms && SGSettings.autoMeleeSidearm)
+                        CheckMeleeSidearm(role);
+                    return;
+                }
+
+                // Undrafted: auto-manage gear normally
+                // Weapons handled colony-wide by MapComponent_WeaponAssigner
+                // Per-pawn only on context change (hunting)
                 if (SGSettings.autoWeapons && contextChanged)
                     EvaluateWeapon(role, context, contextChanged);
 
@@ -86,13 +95,11 @@ namespace SmartGear
                 if (SGSettings.autoInventory)
                     EvaluateInventory(role);
 
-                // Sidearm: pick up a sidearm if we don't have one
-                if (SGSettings.sidearms && !Pawn.Drafted)
+                // Pick up sidearm if we don't have one
+                if (SGSettings.sidearms)
                     EvaluateSidearm(role);
 
-                // Sidearm: auto-draw melee when under melee attack
-                if (SGSettings.sidearms && SGSettings.autoMeleeSidearm && Pawn.Drafted)
-                    CheckMeleeSidearm(role);
+                // (sidearm melee draw handled in drafted block above)
             }
             catch (Exception ex)
             {
