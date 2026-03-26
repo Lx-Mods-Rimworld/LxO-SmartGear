@@ -28,12 +28,40 @@ namespace SmartGear
                     def.comps.Add(new CompProperties_GearManager());
                 }
 
-                Log.Message("[SmartGear] Initialized. Patches applied, comp added to humanlike pawns.");
+                // Add ITab
+                foreach (var def in DefDatabase<ThingDef>.AllDefs)
+                {
+                    if (def.race == null || def.race.intelligence != Intelligence.Humanlike) continue;
+                    if (def.inspectorTabs == null) continue;
+                    if (def.inspectorTabs.Contains(typeof(ITab_GearManager))) continue;
+                    def.inspectorTabs.Add(typeof(ITab_GearManager));
+                    if (def.inspectorTabsResolved != null)
+                    {
+                        var tab = InspectTabManager.GetSharedInstance(typeof(ITab_GearManager));
+                        if (tab != null && !def.inspectorTabsResolved.Contains(tab))
+                            def.inspectorTabsResolved.Add(tab);
+                    }
+                }
+
+                Log.Message("[SmartGear] Initialized. Patches applied, comp + tab added to humanlike pawns.");
             }
             catch (Exception ex)
             {
                 Log.Error("[SmartGear] Init failed: " + ex);
             }
+        }
+    }
+
+    /// <summary>
+    /// Add MapComponent for colony-wide weapon assignment.
+    /// </summary>
+    [HarmonyPatch(typeof(Map), nameof(Map.FinalizeInit))]
+    public static class Patch_MapInit
+    {
+        public static void Postfix(Map __instance)
+        {
+            if (__instance.GetComponent<MapComponent_WeaponAssigner>() == null)
+                __instance.components.Add(new MapComponent_WeaponAssigner(__instance));
         }
     }
 

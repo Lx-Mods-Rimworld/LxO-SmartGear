@@ -75,7 +75,9 @@ namespace SmartGear
                 lastContext = context;
 
                 // Evaluate and swap gear
-                if (SGSettings.autoWeapons)
+                // Weapons are handled colony-wide by MapComponent_WeaponAssigner
+                // Only per-pawn weapon evaluation on context change (combat/hunting)
+                if (SGSettings.autoWeapons && contextChanged)
                     EvaluateWeapon(role, context, contextChanged);
 
                 if (SGSettings.autoApparel)
@@ -83,6 +85,10 @@ namespace SmartGear
 
                 if (SGSettings.autoInventory)
                     EvaluateInventory(role);
+
+                // Sidearm: pick up a sidearm if we don't have one
+                if (SGSettings.sidearms && !Pawn.Drafted)
+                    EvaluateSidearm(role);
 
                 // Sidearm: auto-draw melee when under melee attack
                 if (SGSettings.sidearms && SGSettings.autoMeleeSidearm && Pawn.Drafted)
@@ -239,6 +245,63 @@ namespace SmartGear
         }
 
         // ===================== SIDEARMS =====================
+
+        /// <summary>
+        /// Ensure pawn has a sidearm in inventory (opposite type of primary).
+        /// Called during regular gear evaluation.
+        /// </summary>
+        private void EvaluateSidearm(Role role)
+        {
+            if (!SGSettings.sidearms) return;
+            if (Pawn.WorkTagIsDisabled(WorkTags.Violent)) return;
+
+            Thing primary = Pawn.equipment?.Primary;
+            if (primary == null) return;
+
+            // Check if already carrying a sidearm in inventory
+            bool hasMeleeSidearm = false;
+            bool hasRangedSidearm = false;
+            foreach (Thing item in Pawn.inventory.innerContainer)
+            {
+                if (item.def.IsMeleeWeapon) hasMeleeSidearm = true;
+                if (item.def.IsRangedWeapon) hasRangedSidearm = true;
+            }
+
+            // Determine what sidearm we need
+            bool needMelee = primary.def.IsRangedWeapon && !hasMeleeSidearm;
+            bool needRanged = primary.def.IsMeleeWeapon && !hasRangedSidearm;
+
+            if (!needMelee && !needRanged) return;
+
+            // Find best sidearm on map
+            Thing bestSidearm = null;
+            float bestScore = 0f;
+
+            foreach (Thing weapon in Pawn.Map.listerThings.ThingsInGroup(ThingRequestGroup.Weapon))
+            {
+                if (weapon.IsForbidden(Pawn)) continue;
+                if (!Pawn.CanReserve(weapon)) continue;
+                if (weapon.Position.DistanceTo(Pawn.Position) > 30f) continue;
+
+                if (needMelee && !weapon.def.IsMeleeWeapon) continue;
+                if (needRanged && !weapon.def.IsRangedWeapon) continue;
+
+                float score = GearScorer.ScoreSidearm(Pawn, weapon, role);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestSidearm = weapon;
+                }
+            }
+
+            if (bestSidearm != null)
+            {
+                // Pick up sidearm to inventory
+                var job = JobMaker.MakeJob(JobDefOf.TakeCountToInventory, bestSidearm);
+                job.count = 1;
+                Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
+            }
+        }
 
         private void CheckMeleeSidearm(Role role)
         {
