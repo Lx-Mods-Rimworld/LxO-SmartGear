@@ -283,9 +283,29 @@ namespace SmartGear
             if (Pawn.carryTracker?.CarriedThing?.def?.IsMedicine == true)
                 medsInInventory += Pawn.carryTracker.CarriedThing.stackCount;
 
+            // Drop excess medicine if carrying too many (e.g. from hauling)
+            if (medsInInventory > SGSettings.medicineCount)
+            {
+                int excess = medsInInventory - SGSettings.medicineCount;
+                var inv = Pawn.inventory.innerContainer;
+                for (int i = inv.Count - 1; i >= 0 && excess > 0; i--)
+                {
+                    if (inv[i].def.IsMedicine)
+                    {
+                        int drop = Math.Min(excess, inv[i].stackCount);
+                        if (inv.TryDrop(inv[i], Pawn.Position, Pawn.Map, ThingPlaceMode.Near, drop, out _))
+                        {
+                            SGDebug.Log("[SmartGear] " + Pawn.LabelShort + " dropped " + drop
+                                + "x excess medicine (had " + medsInInventory + ", max " + SGSettings.medicineCount + ")");
+                            excess -= drop;
+                        }
+                    }
+                }
+                return;
+            }
+
             if (medsInInventory >= SGSettings.medicineCount) return;
 
-            // Don't pick up medicine we already have enough of
             int needed = SGSettings.medicineCount - medsInInventory;
             if (needed <= 0) return;
 
