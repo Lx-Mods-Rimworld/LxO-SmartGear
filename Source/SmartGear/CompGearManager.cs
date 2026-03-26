@@ -60,6 +60,9 @@ namespace SmartGear
         {
             if (!SGSettings.enabled || locked) return;
             if (Pawn.Dead || Pawn.Downed || Pawn.Map == null) return;
+            // Only manage gear for permanent player colonists -- not guests, visitors, quest pawns
+            if (Pawn.Faction != Faction.OfPlayer) return;
+            if (Pawn.guest != null && Pawn.guest.HostFaction != null) return; // Guest/prisoner of someone
 
             if (tickOffset < 0)
                 tickOffset = parent.thingIDNumber % SGSettings.evaluateInterval;

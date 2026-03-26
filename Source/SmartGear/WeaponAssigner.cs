@@ -33,6 +33,7 @@ namespace SmartGear
             foreach (Pawn pawn in map.mapPawns.FreeColonistsSpawned)
             {
                 if (pawn.Dead || pawn.Downed) continue;
+                if (pawn.Faction != Faction.OfPlayer) continue; // Skip guests/quest pawns
                 var comp = pawn.GetComp<CompGearManager>();
                 if (comp == null || comp.locked) continue;
                 if (pawn.WorkTagIsDisabled(WorkTags.Violent)) continue;

@@ -79,7 +79,7 @@ namespace SmartGear
                 if (newEq == null) return true;
 
                 Pawn pawn = __instance.pawn;
-                if (pawn == null || !pawn.IsColonist) return true;
+                if (pawn == null || pawn.Faction != Faction.OfPlayer) return true;
 
                 bool isRanged = newEq.def.IsRangedWeapon;
                 bool isMelee = newEq.def.IsMeleeWeapon;
