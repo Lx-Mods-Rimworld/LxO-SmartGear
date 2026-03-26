@@ -232,8 +232,12 @@ namespace SmartGear
                 if (apparel.IsForbidden(Pawn)) continue;
                 if (!Pawn.CanReserve(apparel) && Pawn.CanReach(apparel, PathEndMode.ClosestTouch, Danger.Some)) continue;
 
-                // Check if pawn can wear it
+                // Check if pawn can wear it (body parts, gender)
                 if (!ApparelUtility.HasPartsToWear(Pawn, apparel.def)) continue;
+                if (apparel.def.apparel?.gender != Gender.None && apparel.def.apparel.gender != Pawn.gender) continue;
+                // Skip apparel locked to another pawn (biocoded)
+                var bioApp = apparel.TryGetComp<CompBiocodable>();
+                if (bioApp != null && bioApp.Biocoded && bioApp.CodedPawn != Pawn) continue;
 
                 float newScore = GearScorer.ScoreApparel(Pawn, apparel, role, context);
 
@@ -243,6 +247,12 @@ namespace SmartGear
                 {
                     if (!ApparelUtility.CanWearTogether(worn.def, apparel.def, Pawn.RaceProps.body))
                     {
+                        // Never remove locked apparel (slave collars, biocoded)
+                        if (Pawn.apparel.IsLocked(worn))
+                        {
+                            betterThanCurrent = false;
+                            break;
+                        }
                         float wornScore = GearScorer.ScoreApparel(Pawn, worn, role, context);
                         if (newScore <= wornScore * (1f + SGSettings.upgradeThreshold))
                         {

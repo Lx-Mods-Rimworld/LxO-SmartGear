@@ -70,6 +70,13 @@ namespace SmartGear
                 if (cooldown > 0) score += (1f / cooldown) * 10f;
             }
 
+            // HP/durability: penalize damaged weapons
+            if (weapon.HitPoints < weapon.MaxHitPoints)
+            {
+                float hpPct = (float)weapon.HitPoints / weapon.MaxHitPoints;
+                score *= hpPct;
+            }
+
             // Quality bonus
             QualityCategory quality;
             if (weapon.TryGetQuality(out quality))
