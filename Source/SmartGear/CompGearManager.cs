@@ -122,16 +122,27 @@ namespace SmartGear
             ThingWithComps equipped = Pawn.equipment?.Primary;
             if (equipped == null) return;
 
-            // A real weapon is either ranged or melee weapon by def
-            bool isRealWeapon = equipped.def.IsRangedWeapon || equipped.def.IsMeleeWeapon;
-            if (isRealWeapon) return;
+            // Log EVERY equipment check so we can see what's happening
+            bool isRanged = equipped.def.IsRangedWeapon;
+            bool isMelee = equipped.def.IsMeleeWeapon;
+            bool isWeapon = equipped.def.IsWeapon;
 
-            // This is NOT a real weapon (wood, steel, food, etc.) -- remove it
-            Log.Warning("[SmartGear] " + Pawn.LabelShort + " has bogus equipment: "
-                + equipped.def.label + ". Removing and dropping.");
+            if (!isRanged && !isMelee)
+            {
+                // This is NOT a real weapon -- remove it
+                Log.Warning("[SmartGear] BOGUS EQUIP on " + Pawn.LabelShort
+                    + ": '" + equipped.def.defName + "' (label=" + equipped.def.label
+                    + " IsWeapon=" + isWeapon
+                    + " IsRanged=" + isRanged
+                    + " IsMelee=" + isMelee
+                    + " category=" + equipped.def.category
+                    + " thingClass=" + equipped.def.thingClass?.Name
+                    + "). Dropping it now. CurJob=" + (Pawn.CurJob?.def?.defName ?? "none")
+                    + " LastJob=" + (Pawn.jobs?.curDriver?.GetType()?.Name ?? "none"));
 
-            ThingWithComps dropped;
-            Pawn.equipment.TryDropEquipment(equipped, out dropped, Pawn.Position, false);
+                ThingWithComps dropped;
+                Pawn.equipment.TryDropEquipment(equipped, out dropped, Pawn.Position, false);
+            }
         }
 
         // ===================== WEAPONS =====================
@@ -171,7 +182,10 @@ namespace SmartGear
 
             if (bestWeapon != null && bestWeapon != currentWeapon)
             {
-                // Create equip job
+                Log.Message("[SmartGear] " + Pawn.LabelShort + " EvaluateWeapon: equipping '"
+                    + bestWeapon.def.defName + "' (IsRanged=" + bestWeapon.def.IsRangedWeapon
+                    + " IsMelee=" + bestWeapon.def.IsMeleeWeapon
+                    + " score=" + bestScore.ToString("F0") + ")");
                 var job = JobMaker.MakeJob(JobDefOf.Equip, bestWeapon);
                 Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
             }
