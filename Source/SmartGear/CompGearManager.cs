@@ -60,9 +60,13 @@ namespace SmartGear
         {
             if (!SGSettings.enabled || locked) return;
             if (Pawn.Dead || Pawn.Downed || Pawn.Map == null) return;
-            // Only manage gear for permanent player colonists -- not guests, visitors, quest pawns
+            // Only manage gear for player faction -- not visitors from other factions
             if (Pawn.Faction != Faction.OfPlayer) return;
-            if (Pawn.guest != null && Pawn.guest.HostFaction != null) return; // Guest/prisoner of someone
+            if (Pawn.IsPrisoner) return;
+            if (QuestUtility.IsQuestLodger(Pawn)) return; // Temporary quest members
+
+            bool isSlave = Pawn.IsSlave;
+            bool isChild = ModsConfig.BiotechActive && !Pawn.DevelopmentalStage.Adult();
 
             if (tickOffset < 0)
                 tickOffset = parent.thingIDNumber % SGSettings.evaluateInterval;
@@ -84,25 +88,25 @@ namespace SmartGear
                 // Only sidearm auto-draw in melee is allowed (survival reflex).
                 if (Pawn.Drafted)
                 {
-                    if (SGSettings.sidearms && SGSettings.autoMeleeSidearm)
+                    if (SGSettings.sidearms && SGSettings.autoMeleeSidearm && !isChild)
                         CheckMeleeSidearm(role);
                     return;
                 }
 
                 // Undrafted: auto-manage gear normally
-                // Weapons handled colony-wide by MapComponent_WeaponAssigner
-                // Per-pawn only on context change (hunting)
-                if (SGSettings.autoWeapons && contextChanged)
+                // Children: apparel only (no weapons, sidearms, medicine)
+                // Slaves: weapons + apparel + medicine, but no sidearms (colony-wide gives them lower priority)
+                if (SGSettings.autoWeapons && contextChanged && !isChild)
                     EvaluateWeapon(role, context, contextChanged);
 
                 if (SGSettings.autoApparel)
                     EvaluateApparel(role, context, contextChanged);
 
-                if (SGSettings.autoInventory)
+                if (SGSettings.autoInventory && !isChild)
                     EvaluateInventory(role);
 
-                // Pick up sidearm if we don't have one
-                if (SGSettings.sidearms)
+                // Sidearms for colonists only (not slaves, not children)
+                if (SGSettings.sidearms && !isSlave && !isChild)
                     EvaluateSidearm(role);
 
                 // (sidearm melee draw handled in drafted block above)

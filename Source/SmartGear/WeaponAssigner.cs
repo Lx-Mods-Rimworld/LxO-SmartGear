@@ -33,7 +33,10 @@ namespace SmartGear
             foreach (Pawn pawn in map.mapPawns.FreeColonistsSpawned)
             {
                 if (pawn.Dead || pawn.Downed) continue;
-                if (pawn.Faction != Faction.OfPlayer) continue; // Skip guests/quest pawns
+                if (pawn.Faction != Faction.OfPlayer) continue;
+                if (pawn.IsPrisoner || QuestUtility.IsQuestLodger(pawn)) continue;
+                // Skip children (Biotech)
+                if (ModsConfig.BiotechActive && !pawn.DevelopmentalStage.Adult()) continue;
                 var comp = pawn.GetComp<CompGearManager>();
                 if (comp == null || comp.locked) continue;
                 if (pawn.WorkTagIsDisabled(WorkTags.Violent)) continue;
@@ -47,14 +50,21 @@ namespace SmartGear
                     comp = comp,
                     role = role,
                     context = context,
-                    combatSkill = GetCombatSkill(pawn, role)
+                    combatSkill = GetCombatSkill(pawn, role),
+                    isSlave = pawn.IsSlave
                 });
             }
 
             if (pawns.Count == 0) return;
 
-            // Sort pawns by combat skill: best fighters get first pick
-            pawns.Sort((a, b) => b.combatSkill.CompareTo(a.combatSkill));
+            // Sort: colonists first (by combat skill), then slaves (by combat skill)
+            // Colonists get best weapons, slaves get what's left
+            pawns.Sort((a, b) =>
+            {
+                if (a.isSlave != b.isSlave)
+                    return a.isSlave ? 1 : -1; // Slaves sort after colonists
+                return b.combatSkill.CompareTo(a.combatSkill);
+            });
 
             // Collect all available weapons: on map + currently equipped
             var allWeapons = new List<Thing>();
@@ -188,6 +198,7 @@ namespace SmartGear
             public Role role;
             public GearContext context;
             public float combatSkill;
+            public bool isSlave;
         }
     }
 }
