@@ -66,6 +66,49 @@ namespace SmartGear
     }
 
     /// <summary>
+    /// Catch ANY equipment change. Log it and block non-weapons from being equipped.
+    /// This fires at the exact moment equipment changes, not on a timer.
+    /// </summary>
+    [HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.AddEquipment))]
+    public static class Patch_CatchEquipment
+    {
+        public static bool Prefix(Pawn_EquipmentTracker __instance, ThingWithComps newEq)
+        {
+            try
+            {
+                if (newEq == null) return true;
+
+                Pawn pawn = __instance.pawn;
+                if (pawn == null || !pawn.IsColonist) return true;
+
+                bool isRanged = newEq.def.IsRangedWeapon;
+                bool isMelee = newEq.def.IsMeleeWeapon;
+                bool isWeapon = newEq.def.IsWeapon;
+
+                if (!isRanged && !isMelee)
+                {
+                    // BLOCK this equip -- it's not a real weapon
+                    Log.Warning("[SmartGear] BLOCKED equip on " + pawn.LabelShort
+                        + ": '" + newEq.def.defName + "' (label=" + newEq.def.label
+                        + " IsWeapon=" + isWeapon
+                        + " category=" + newEq.def.category
+                        + "). CurJob=" + (pawn.CurJob?.def?.defName ?? "none")
+                        + " JobDriver=" + (pawn.jobs?.curDriver?.GetType()?.Name ?? "none"));
+
+                    // Don't equip it -- return false to skip original method
+                    return false;
+                }
+
+                Log.Message("[SmartGear] Equip on " + pawn.LabelShort + ": '"
+                    + newEq.def.defName + "' (ranged=" + isRanged + " melee=" + isMelee + ")");
+            }
+            catch (Exception) { }
+
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Detect when a pawn is undrafted to restore primary weapon from sidearm.
     /// </summary>
     [HarmonyPatch(typeof(Pawn_DraftController), nameof(Pawn_DraftController.Drafted), MethodType.Setter)]
