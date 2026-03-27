@@ -79,7 +79,10 @@ namespace SmartGear
                 if (newEq == null) return true;
 
                 Pawn pawn = __instance.pawn;
-                if (pawn == null || pawn.Faction != Faction.OfPlayer) return true;
+                if (pawn == null) return true;
+                // Faction.OfPlayer throws during world gen (no player faction yet)
+                Faction playerFaction = Find.FactionManager?.OfPlayer;
+                if (playerFaction == null || pawn.Faction != playerFaction) return true;
 
                 bool isRanged = newEq.def.IsRangedWeapon;
                 bool isMelee = newEq.def.IsMeleeWeapon;
