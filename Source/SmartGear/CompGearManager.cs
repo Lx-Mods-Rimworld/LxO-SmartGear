@@ -342,6 +342,7 @@ namespace SmartGear
                     + "x " + bestMed.def.label + " (has " + medsInInventory + "/" + SGSettings.medicineCount + ")");
                 var job = JobMaker.MakeJob(JobDefOf.TakeCountToInventory, bestMed);
                 job.count = Math.Min(needed, bestMed.stackCount);
+                if (job.count <= 0) return; // Don't pick up 0 items
                 Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
             }
         }
