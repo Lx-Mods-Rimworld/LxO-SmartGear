@@ -33,6 +33,9 @@ namespace SmartGear
         // Lock: player can lock a pawn to disable auto-gear
         public bool locked;
 
+        // Cooldown: prevent medicine pickup spam
+        private int lastMedPickupTick = -9999;
+
         // Per-pawn overrides
         public bool overrideRole;
         public Role manualRole = Role.Default;
@@ -224,50 +227,53 @@ namespace SmartGear
 
             if (prefersNudity) return; // Don't force clothes on nudists
 
-            // For each body slot, find best available apparel
+            // Find the BEST available apparel (not just the first that passes threshold)
+            Apparel bestApparel = null;
+            float bestScore = -999f;
+            float bestWornScore = 0f;
+
             foreach (Thing thing in Pawn.Map.listerThings.ThingsInGroup(ThingRequestGroup.Apparel))
             {
                 Apparel apparel = thing as Apparel;
                 if (apparel == null) continue;
                 if (apparel.IsForbidden(Pawn)) continue;
-                if (!Pawn.CanReserve(apparel) && Pawn.CanReach(apparel, PathEndMode.ClosestTouch, Danger.Some)) continue;
+                if (!Pawn.CanReserve(apparel) || !Pawn.CanReach(apparel, PathEndMode.ClosestTouch, Danger.Some)) continue;
 
                 // Check if pawn can wear it (body parts, gender)
                 if (!ApparelUtility.HasPartsToWear(Pawn, apparel.def)) continue;
                 if (apparel.def.apparel?.gender != Gender.None && apparel.def.apparel.gender != Pawn.gender) continue;
-                // Skip apparel locked to another pawn (biocoded)
                 var bioApp = apparel.TryGetComp<CompBiocodable>();
                 if (bioApp != null && bioApp.Biocoded && bioApp.CodedPawn != Pawn) continue;
 
                 float newScore = GearScorer.ScoreApparel(Pawn, apparel, role, context);
+                if (newScore <= 0f || newScore <= bestScore) continue;
 
                 // Compare to currently worn apparel in same slot
-                bool betterThanCurrent = true;
+                bool blocked = false;
+                float conflictWornScore = 0f;
                 foreach (Apparel worn in Pawn.apparel.WornApparel)
                 {
                     if (!ApparelUtility.CanWearTogether(worn.def, apparel.def, Pawn.RaceProps.body))
                     {
-                        // Never remove locked apparel (slave collars, biocoded)
-                        if (Pawn.apparel.IsLocked(worn))
-                        {
-                            betterThanCurrent = false;
-                            break;
-                        }
-                        float wornScore = GearScorer.ScoreApparel(Pawn, worn, role, context);
-                        if (newScore <= wornScore * (1f + SGSettings.upgradeThreshold))
-                        {
-                            betterThanCurrent = false;
-                            break;
-                        }
+                        if (Pawn.apparel.IsLocked(worn)) { blocked = true; break; }
+                        float ws = GearScorer.ScoreApparel(Pawn, worn, role, context);
+                        if (ws > conflictWornScore) conflictWornScore = ws;
                     }
                 }
+                if (blocked) continue;
 
-                if (betterThanCurrent && newScore > 0f)
-                {
-                    var job = JobMaker.MakeJob(JobDefOf.Wear, apparel);
-                    Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
-                    return; // One apparel change per evaluation to avoid spam
-                }
+                // Must beat worn score by threshold
+                if (newScore <= conflictWornScore * (1f + SGSettings.upgradeThreshold)) continue;
+
+                bestApparel = apparel;
+                bestScore = newScore;
+                bestWornScore = conflictWornScore;
+            }
+
+            if (bestApparel != null)
+            {
+                var job = JobMaker.MakeJob(JobDefOf.Wear, bestApparel);
+                Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
             }
         }
 
@@ -276,6 +282,9 @@ namespace SmartGear
         private void EvaluateInventory(Role role)
         {
             if (!SGSettings.carryMedicine) return;
+
+            // Don't spam medicine pickups -- cooldown after each attempt
+            if (Find.TickManager.TicksGame - lastMedPickupTick < 2500) return;
 
             // Don't interrupt current job to grab medicine
             if (Pawn.CurJob != null && Pawn.CurJob.def == JobDefOf.TakeCountToInventory)
@@ -344,6 +353,7 @@ namespace SmartGear
                 job.count = Math.Min(needed, bestMed.stackCount);
                 if (job.count <= 0) return; // Don't pick up 0 items
                 Pawn.jobs.TryTakeOrderedJob(job, Verse.AI.JobTag.Misc);
+                lastMedPickupTick = Find.TickManager.TicksGame;
             }
         }
 
