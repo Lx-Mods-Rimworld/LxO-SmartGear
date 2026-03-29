@@ -2,6 +2,16 @@
 
 All notable changes to this mod will be documented in this file.
 
+## [1.1.2] - 2026-03-29
+
+### Fixes
+- Fixed biocoded weapon loss during hunting: biocoded weapons are no longer swapped out when a pawn starts a hunting job
+- Fixed biocoded weapon loss during melee sidearm swap: biocoded persona weapons are no longer dropped when switching to melee sidearm
+- Fixed apparel flip-flopping: auto-equip now scores ALL candidate apparel and picks the single best item instead of wearing the first one that passes the threshold
+- Fixed medicine pickup loop: added cooldown between pickup attempts to prevent spam when multiple pawns compete for the same medicine
+- Fixed medicine x0 pickup: pawns no longer issue a "take 0 medicine" job that wastes a work cycle
+- Fixed Faction.OfPlayer crash during world generation when factions are still being initialized
+
 ## [1.1.1] - 2026-03-27
 
 ### Fixes
