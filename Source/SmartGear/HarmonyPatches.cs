@@ -196,6 +196,15 @@ namespace SmartGear
                     if (pawn.inventory.innerContainer.Contains(bestHunting))
                     {
                         ThingWithComps currentWep = pawn.equipment?.Primary;
+
+                        // Never swap away biocoded/persona weapons
+                        if (currentWep != null)
+                        {
+                            var bio = currentWep.TryGetComp<CompBiocodable>();
+                            if (bio != null && bio.Biocoded)
+                                return; // Keep biocoded weapon equipped
+                        }
+
                         if (currentWep != null)
                         {
                             ThingWithComps droppedWep;

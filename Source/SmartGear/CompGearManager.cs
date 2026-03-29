@@ -443,6 +443,11 @@ namespace SmartGear
 
             if (bestMelee != null)
             {
+                // Never swap away biocoded/persona weapons
+                var bio = (currentWeapon as ThingWithComps)?.TryGetComp<CompBiocodable>();
+                if (bio != null && bio.Biocoded)
+                    return;
+
                 // Store current weapon as primary (to re-equip later)
                 primaryWeapon = currentWeapon;
 
