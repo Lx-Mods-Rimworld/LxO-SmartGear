@@ -123,6 +123,7 @@ namespace SmartGear
                 Pawn pawn = __instance.pawn;
                 if (pawn == null) return;
 
+                Log.Message($"[SmartGear] Patch_DraftedSet: {pawn.LabelShort} undrafted, calling OnUndraft");
                 var comp = pawn.GetComp<CompGearManager>();
                 comp?.OnUndraft();
             }
@@ -192,6 +193,8 @@ namespace SmartGear
 
                 if (bestHunting != null)
                 {
+                    Log.Message($"[SmartGear] Patch_StartJob_Hunting: {pawn.LabelShort} found better hunting weapon '{bestHunting.LabelShort}' (score={bestScore:F1}) vs current '{pawn.equipment?.Primary?.LabelShort ?? "none"}'");
+
                     // Swap to hunting weapon
                     if (pawn.inventory.innerContainer.Contains(bestHunting))
                     {
@@ -202,19 +205,37 @@ namespace SmartGear
                         {
                             var bio = currentWep.TryGetComp<CompBiocodable>();
                             if (bio != null && bio.Biocoded)
+                            {
+                                Log.Message($"[SmartGear] Patch_StartJob_Hunting: {pawn.LabelShort} keeping biocoded weapon '{currentWep.LabelShort}'");
                                 return; // Keep biocoded weapon equipped
+                            }
                         }
+
+                        Log.Message($"[SmartGear] Patch_StartJob_Hunting: {pawn.LabelShort} swapping '{currentWep?.LabelShort ?? "none"}' -> '{bestHunting.LabelShort}' for hunting");
 
                         if (currentWep != null)
                         {
                             ThingWithComps droppedWep;
                             pawn.equipment.TryDropEquipment(currentWep, out droppedWep, pawn.Position);
                             if (droppedWep != null)
-                                pawn.inventory.innerContainer.TryAdd(droppedWep);
+                            {
+                                if (droppedWep.Spawned)
+                                    droppedWep.DeSpawn();
+                                if (!pawn.inventory.innerContainer.TryAdd(droppedWep))
+                                    GenPlace.TryPlaceThing(droppedWep, pawn.Position, pawn.Map, ThingPlaceMode.Near);
+                            }
                         }
                         pawn.inventory.innerContainer.Remove(bestHunting);
                         pawn.equipment.AddEquipment(bestHunting as ThingWithComps);
                     }
+                    else
+                    {
+                        Log.Message($"[SmartGear] Patch_StartJob_Hunting: {pawn.LabelShort} best hunting weapon '{bestHunting.LabelShort}' is on map (not in inventory), skipping swap");
+                    }
+                }
+                else
+                {
+                    Log.Message($"[SmartGear] Patch_StartJob_Hunting: {pawn.LabelShort} keeping current weapon for hunting (no better option found)");
                 }
             }
             catch (Exception) { }

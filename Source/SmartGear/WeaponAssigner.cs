@@ -28,18 +28,22 @@ namespace SmartGear
 
         private void AssignWeaponsOptimally()
         {
+            Log.Message("[SmartGear] WeaponAssigner: starting colony-wide weapon assignment");
+
             // Collect all colonists with gear management
             var pawns = new List<PawnWeaponEntry>();
+            int skippedDead = 0, skippedDrafted = 0, skippedLocked = 0, skippedPacifist = 0, skippedOther = 0;
             foreach (Pawn pawn in map.mapPawns.FreeColonistsSpawned)
             {
-                if (pawn.Dead || pawn.Downed) continue;
-                if (pawn.Faction != Faction.OfPlayer) continue;
-                if (pawn.IsPrisoner || QuestUtility.IsQuestLodger(pawn)) continue;
+                if (pawn.Dead || pawn.Downed) { skippedDead++; continue; }
+                if (pawn.Drafted) { skippedDrafted++; continue; }
+                if (pawn.Faction != Faction.OfPlayer) { skippedOther++; continue; }
+                if (pawn.IsPrisoner || QuestUtility.IsQuestLodger(pawn)) { skippedOther++; continue; }
                 // Skip children (Biotech)
-                if (ModsConfig.BiotechActive && !pawn.DevelopmentalStage.Adult()) continue;
+                if (ModsConfig.BiotechActive && !pawn.DevelopmentalStage.Adult()) { skippedOther++; continue; }
                 var comp = pawn.GetComp<CompGearManager>();
-                if (comp == null || comp.locked) continue;
-                if (pawn.WorkTagIsDisabled(WorkTags.Violent)) continue;
+                if (comp == null || comp.locked) { skippedLocked++; continue; }
+                if (pawn.WorkTagIsDisabled(WorkTags.Violent)) { skippedPacifist++; continue; }
 
                 Role role = comp.CurrentRole;
                 GearContext context = ContextDetector.GetContext(pawn);
@@ -55,6 +59,8 @@ namespace SmartGear
                 });
             }
 
+            Log.Message($"[SmartGear] WeaponAssigner: {pawns.Count} eligible pawns (skipped: {skippedDead} dead/downed, {skippedDrafted} drafted, {skippedLocked} locked, {skippedPacifist} pacifist, {skippedOther} other)");
+
             if (pawns.Count == 0) return;
 
             // Sort: colonists first (by combat skill), then slaves (by combat skill)
@@ -65,6 +71,10 @@ namespace SmartGear
                     return a.isSlave ? 1 : -1; // Slaves sort after colonists
                 return b.combatSkill.CompareTo(a.combatSkill);
             });
+
+            // Log priority order
+            Log.Message("[SmartGear] WeaponAssigner priority order: " + string.Join(", ",
+                pawns.Select(e => $"{e.pawn.LabelShort}({e.role},skill={e.combatSkill:F0}{(e.isSlave ? ",slave" : "")})")));
 
             // Collect all available weapons: on map + currently equipped
             var allWeapons = new List<Thing>();
@@ -80,6 +90,8 @@ namespace SmartGear
                 allWeapons.Add(weapon);
             }
 
+            int mapWeaponCount = allWeapons.Count;
+
             // Add currently equipped weapons (available for reassignment)
             foreach (var entry in pawns)
             {
@@ -90,6 +102,8 @@ namespace SmartGear
                     weaponOwner[weapon.thingIDNumber] = entry.pawn;
                 }
             }
+
+            Log.Message($"[SmartGear] WeaponAssigner: {allWeapons.Count} total weapons ({mapWeaponCount} on map, {allWeapons.Count - mapWeaponCount} equipped)");
 
             if (allWeapons.Count == 0) return;
 
@@ -126,10 +140,16 @@ namespace SmartGear
                 {
                     assignments[entry.pawn] = bestWeapon;
                     assignedWeapons.Add(bestWeapon.thingIDNumber);
+                    Log.Message($"[SmartGear] WeaponAssigner: assigned '{bestWeapon.LabelShort}' to {entry.pawn.LabelShort} (score={bestScore:F1}, role={entry.role})");
+                }
+                else
+                {
+                    Log.Message($"[SmartGear] WeaponAssigner: no weapon available for {entry.pawn.LabelShort}");
                 }
             }
 
             // Execute swaps: only swap if the new weapon is significantly better
+            int swapsExecuted = 0, swapsSkipped = 0;
             foreach (var kvp in assignments)
             {
                 Pawn pawn = kvp.Key;
@@ -137,13 +157,23 @@ namespace SmartGear
                 Thing currentWeapon = pawn.equipment?.Primary;
 
                 // Already have the right weapon
-                if (currentWeapon == targetWeapon) continue;
+                if (currentWeapon == targetWeapon)
+                {
+                    Log.Message($"[SmartGear] WeaponAssigner: {pawn.LabelShort} already has assigned weapon '{targetWeapon.LabelShort}'");
+                    swapsSkipped++;
+                    continue;
+                }
 
                 // Never swap away biocoded or persona weapons
                 if (currentWeapon != null)
                 {
                     var bio = currentWeapon.TryGetComp<CompBiocodable>();
-                    if (bio != null && bio.Biocoded && bio.CodedPawn == pawn) continue;
+                    if (bio != null && bio.Biocoded && bio.CodedPawn == pawn)
+                    {
+                        Log.Message($"[SmartGear] WeaponAssigner: {pawn.LabelShort} keeping biocoded weapon '{currentWeapon.LabelShort}'");
+                        swapsSkipped++;
+                        continue;
+                    }
                 }
 
                 var comp = pawn.GetComp<CompGearManager>();
@@ -155,25 +185,48 @@ namespace SmartGear
                 float newScore = GearScorer.ScoreWeapon(pawn, targetWeapon, role, context);
 
                 // Only swap if significantly better (prevents constant swapping)
-                if (newScore <= currentScore * (1f + SGSettings.upgradeThreshold)) continue;
+                float minDelta = Math.Max(currentScore * SGSettings.upgradeThreshold, 10f);
+                if (newScore <= currentScore + minDelta)
+                {
+                    Log.Message($"[SmartGear] WeaponAssigner: {pawn.LabelShort} skipping swap '{currentWeapon?.LabelShort ?? "none"}'(score={currentScore:F1}) -> '{targetWeapon.LabelShort}'(score={newScore:F1}), delta {newScore - currentScore:F1} < threshold {minDelta:F1}");
+                    swapsSkipped++;
+                    continue;
+                }
 
                 // If the target weapon is on the ground, go pick it up
                 if (targetWeapon.Spawned && pawn.CanReserve(targetWeapon))
                 {
-                    // Drop current weapon first if we have one
+                    Log.Message($"[SmartGear] WeaponAssigner SWAP: {pawn.LabelShort} '{currentWeapon?.LabelShort ?? "none"}'(score={currentScore:F1}) -> '{targetWeapon.LabelShort}'(score={newScore:F1}), delta={newScore - currentScore:F1}");
+
+                    // Drop current weapon and stash in inventory (don't leave on ground)
                     if (currentWeapon != null)
                     {
                         ThingWithComps dropped;
                         pawn.equipment.TryDropEquipment(currentWeapon as ThingWithComps,
                             out dropped, pawn.Position, false);
+                        if (dropped != null)
+                        {
+                            if (dropped.Spawned)
+                                dropped.DeSpawn();
+                            if (!pawn.inventory.innerContainer.TryAdd(dropped))
+                                GenPlace.TryPlaceThing(dropped, pawn.Position, pawn.Map, ThingPlaceMode.Near);
+                        }
                     }
 
                     var job = JobMaker.MakeJob(JobDefOf.Equip, targetWeapon);
                     pawn.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+                    swapsExecuted++;
+                }
+                else
+                {
+                    Log.Message($"[SmartGear] WeaponAssigner: {pawn.LabelShort} can't reach/reserve target weapon '{targetWeapon.LabelShort}'");
+                    swapsSkipped++;
                 }
                 // If the target weapon is equipped by another pawn who got assigned something else,
                 // the other pawn will drop it on their next evaluation cycle
             }
+
+            Log.Message($"[SmartGear] WeaponAssigner: done. {swapsExecuted} swaps executed, {swapsSkipped} skipped");
         }
 
         private float GetCombatSkill(Pawn pawn, Role role)

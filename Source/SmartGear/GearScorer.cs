@@ -96,15 +96,18 @@ namespace SmartGear
             {
                 foreach (var precept in pawn.Ideo.PreceptsListForReading)
                 {
-                    // Check for weapon-related precepts (noble weapons, ranged preference, etc.)
                     if (precept.def.defName.Contains("Weapon") || precept.def.defName.Contains("Melee")
                         || precept.def.defName.Contains("Ranged"))
                     {
-                        // Noble/preferred weapons get a bonus
+                        bool disapproved = precept.def.defName.Contains("Disapproved")
+                            || precept.def.defName.Contains("Despised")
+                            || precept.def.defName.Contains("Horrible");
+                        float preceptScore = disapproved ? -30f : 30f;
+
                         if (isMelee && precept.def.defName.Contains("Melee"))
-                            score += 30f;
+                            score += preceptScore;
                         if (isRanged && precept.def.defName.Contains("Ranged"))
-                            score += 30f;
+                            score += preceptScore;
                     }
                 }
             }
@@ -119,11 +122,17 @@ namespace SmartGear
                     if (cooldown < 1.5f) score += 20f;
                 }
                 // Careful shooter: prefer accurate weapons
-                if (pawn.story.traits.HasTrait(TraitDef.Named("ShootingAccuracy"), 2) && isRanged)
+                if (pawn.story.traits.HasTrait(TraitDef.Named("ShootingAccuracy"), 1) && isRanged)
                 {
                     float range = weapon.def.Verbs?.FirstOrDefault()?.range ?? 0f;
                     if (range > 25f) score += 20f;
                 }
+            }
+
+            // Log suspicious scores (0 or negative for a real weapon that isn't biocoded to someone else)
+            if (score <= 0f && (isRanged || isMelee))
+            {
+                Log.Warning($"[SmartGear] ScoreWeapon: suspicious score {score:F1} for {pawn.LabelShort} + '{weapon.def.defName}' (role={role}, context={context}, isMelee={isMelee}, isRanged={isRanged}, wantsMelee={wantsMelee})");
             }
 
             return score;
@@ -140,11 +149,13 @@ namespace SmartGear
 
             float score = 0f;
 
-            // Base protection value
-            float armor = apparel.GetStatValue(StatDefOf.ArmorRating_Sharp)
-                + apparel.GetStatValue(StatDefOf.ArmorRating_Blunt) * 0.5f;
-            float insulation = apparel.GetStatValue(StatDefOf.Insulation_Cold)
-                + apparel.GetStatValue(StatDefOf.Insulation_Heat);
+            // Base protection value -- use GetStatValueAbstract so worn and unworn
+            // items produce the same score (GetStatValue changes based on equipped state)
+            ThingDef stuff = apparel.Stuff;
+            float armor = apparel.def.GetStatValueAbstract(StatDefOf.ArmorRating_Sharp, stuff)
+                + apparel.def.GetStatValueAbstract(StatDefOf.ArmorRating_Blunt, stuff) * 0.5f;
+            float insulation = apparel.def.GetStatValueAbstract(StatDefOf.Insulation_Cold, stuff)
+                + apparel.def.GetStatValueAbstract(StatDefOf.Insulation_Heat, stuff);
 
             // Context-based scoring
             switch (context)
@@ -152,9 +163,14 @@ namespace SmartGear
                 case GearContext.Combat:
                     // Combat: armor is king
                     score += armor * 200f;
-                    // Move speed penalty matters in combat
-                    float moveSpeed = apparel.GetStatValue(StatDefOf.MoveSpeed, true, -1);
-                    score += moveSpeed * 20f;
+                    // Move speed offset matters in combat (apparel affects MoveSpeed via equippedStatOffsets)
+                    float moveSpeedOffset = 0f;
+                    if (apparel.def.equippedStatOffsets != null)
+                    {
+                        foreach (var mod in apparel.def.equippedStatOffsets)
+                            if (mod.stat == StatDefOf.MoveSpeed) moveSpeedOffset = mod.value;
+                    }
+                    score += moveSpeedOffset * 20f;
                     break;
 
                 case GearContext.Work:
@@ -162,19 +178,25 @@ namespace SmartGear
                     score += ScoreApparelForWork(pawn, apparel, role);
                     // Light armor still nice
                     score += armor * 30f;
-                    // Move speed matters for workers
-                    score += apparel.GetStatValue(StatDefOf.MoveSpeed, true, -1) * 15f;
+                    // Move speed offset matters for workers
+                    float workMoveOffset = 0f;
+                    if (apparel.def.equippedStatOffsets != null)
+                    {
+                        foreach (var mod in apparel.def.equippedStatOffsets)
+                            if (mod.stat == StatDefOf.MoveSpeed) workMoveOffset = mod.value;
+                    }
+                    score += workMoveOffset * 15f;
                     break;
 
                 case GearContext.Cold:
                     // Cold: insulation is critical
-                    score += apparel.GetStatValue(StatDefOf.Insulation_Cold) * 50f;
+                    score += apparel.def.GetStatValueAbstract(StatDefOf.Insulation_Cold, stuff) * 50f;
                     score += armor * 20f;
                     break;
 
                 case GearContext.Hot:
                     // Hot: heat insulation + light clothing
-                    score += apparel.GetStatValue(StatDefOf.Insulation_Heat) * 50f;
+                    score += apparel.def.GetStatValueAbstract(StatDefOf.Insulation_Heat, stuff) * 50f;
                     // Penalize heavy armor in heat
                     score -= armor * 30f;
                     break;
@@ -201,9 +223,11 @@ namespace SmartGear
             // Royal title requirements
             score += ScoreApparelForRoyalty(pawn, apparel);
 
-            // Already wearing it: small bonus to avoid constant swapping
+            // Already wearing it: small tiebreaker bonus.
+            // Stats are now calculated consistently (GetStatValueAbstract), so this
+            // only needs to prevent swapping between items with nearly identical scores.
             if (pawn.apparel?.WornApparel?.Contains(apparel) == true)
-                score += 20f;
+                score += 5f;
 
             // HP condition: penalize damaged gear
             if (apparel.HitPoints < apparel.MaxHitPoints)
@@ -215,6 +239,12 @@ namespace SmartGear
             // Tainted: big penalty
             if (apparel.WornByCorpse)
                 score -= 100f;
+
+            // Log suspicious scores (negative for non-tainted apparel)
+            if (score <= 0f && !apparel.WornByCorpse)
+            {
+                Log.Warning($"[SmartGear] ScoreApparel: suspicious score {score:F1} for {pawn.LabelShort} + '{apparel.def.defName}' (role={role}, context={context})");
+            }
 
             return score;
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using RimWorld;
 using Verse;
 
@@ -21,45 +22,99 @@ namespace SmartGear
 
     public static class RoleDetector
     {
+        // Track last detected role per pawn for change-only logging
+        private static readonly Dictionary<int, Role> lastLoggedRole = new Dictionary<int, Role>();
+
         /// <summary>
         /// Detect the best role for a pawn based on skills, traits, and work assignments.
         /// </summary>
         public static Role DetectRole(Pawn pawn)
         {
             if (pawn?.skills == null || pawn?.story == null) return Role.Default;
+            if (!pawn.IsColonistPlayerControlled) return Role.Default;
+
+            Role result;
+            string reason;
 
             // Pacifist check
             if (pawn.WorkTagIsDisabled(WorkTags.Violent))
-                return Role.Pacifist;
-
+            {
+                result = Role.Pacifist;
+                reason = "incapable of violence";
+            }
             // Brawler trait always = Brawler role
-            if (pawn.story.traits?.HasTrait(TraitDefOf.Brawler) == true)
-                return Role.Brawler;
+            else if (pawn.story.traits?.HasTrait(TraitDefOf.Brawler) == true)
+            {
+                result = Role.Brawler;
+                reason = "Brawler trait";
+            }
+            // Hunter: assigned to hunting as priority 1
+            else if (pawn.workSettings != null && pawn.workSettings.EverWork
+                && pawn.workSettings.GetPriority(WorkTypeDefOf.Hunting) == 1)
+            {
+                result = Role.Hunter;
+                reason = "hunting priority 1";
+            }
+            else
+            {
+                int shooting = pawn.skills.GetSkill(SkillDefOf.Shooting)?.Level ?? 0;
+                int melee = pawn.skills.GetSkill(SkillDefOf.Melee)?.Level ?? 0;
+                int medicine = pawn.skills.GetSkill(SkillDefOf.Medicine)?.Level ?? 0;
 
-            int shooting = pawn.skills.GetSkill(SkillDefOf.Shooting)?.Level ?? 0;
-            int melee = pawn.skills.GetSkill(SkillDefOf.Melee)?.Level ?? 0;
-            int medicine = pawn.skills.GetSkill(SkillDefOf.Medicine)?.Level ?? 0;
+                // Doctor: medicine is their best combat-relevant skill AND >= 8
+                if (medicine >= 8 && medicine >= shooting && medicine >= melee)
+                {
+                    result = Role.Doctor;
+                    reason = $"medicine={medicine} >= shooting={shooting}, melee={melee}";
+                }
+                // Shooter vs Brawler: who's better?
+                else if (shooting >= 8 && shooting > melee)
+                {
+                    result = Role.Shooter;
+                    reason = $"shooting={shooting} > melee={melee}";
+                }
+                else if (melee >= 8 && melee > shooting)
+                {
+                    result = Role.Brawler;
+                    reason = $"melee={melee} > shooting={shooting}";
+                }
+                // If both combat skills are low, check if they're primarily a worker
+                else if (shooting < 5 && melee < 5)
+                {
+                    result = Role.Worker;
+                    reason = $"low combat skills (shooting={shooting}, melee={melee})";
+                }
+                // Moderate combat skills: default to shooting (ranged is generally safer)
+                else if (shooting >= melee)
+                {
+                    result = Role.Shooter;
+                    reason = $"shooting={shooting} >= melee={melee} (moderate)";
+                }
+                else
+                {
+                    result = Role.Brawler;
+                    reason = $"melee={melee} > shooting={shooting} (moderate)";
+                }
+            }
 
-            // Doctor: medicine is their best combat-relevant skill AND >= 8
-            if (medicine >= 8 && medicine >= shooting && medicine >= melee)
-                return Role.Doctor;
+            // Log only when role changes
+            int pawnId = pawn.thingIDNumber;
+            Role prev;
+            if (lastLoggedRole.TryGetValue(pawnId, out prev))
+            {
+                if (prev != result)
+                {
+                    Log.Message($"[SmartGear] {pawn.LabelShort} role changed: {prev} -> {result} ({reason})");
+                    lastLoggedRole[pawnId] = result;
+                }
+            }
+            else
+            {
+                Log.Message($"[SmartGear] {pawn.LabelShort} initial role: {result} ({reason})");
+                lastLoggedRole[pawnId] = result;
+            }
 
-            // Shooter vs Brawler: who's better?
-            if (shooting >= 8 && shooting > melee)
-                return Role.Shooter;
-
-            if (melee >= 8 && melee > shooting)
-                return Role.Brawler;
-
-            // If both combat skills are low, check if they're primarily a worker
-            if (shooting < 5 && melee < 5)
-                return Role.Worker;
-
-            // Moderate combat skills: default to shooting (ranged is generally safer)
-            if (shooting >= melee)
-                return Role.Shooter;
-
-            return Role.Brawler;
+            return result;
         }
 
         /// <summary>
