@@ -2,6 +2,20 @@
 
 All notable changes to this mod will be documented in this file.
 
+## [1.2.0] - 2026-04-01
+
+### Features
+- Apparel scoring now uses consistent base stats -- worn and unworn items are scored equally, preventing false upgrades
+- Temperature context (Cold/Hot) requires sustained exposure (~42 seconds) before triggering gear changes -- walking through a freezer no longer causes a gear swap
+- Apparel only re-evaluates on significant context changes (Combat, Cold, Hot) -- normal work/idle transitions no longer trigger swaps
+- Comprehensive logging for all gear decisions (visible in Player.log as `[SmartGear]`)
+
+### Fixes
+- Fixed apparel flip-flop between two similar items caused by GetStatValue returning different scores for worn vs unworn gear
+- Fixed outfit policy bypass: pawns now respect player-set apparel policies when auto-equipping
+- Fixed weapons being dropped on the ground during swaps -- old weapons now go to inventory first
+- Fixed crash on non-colonist pawns (raiders, guests, slaves) when detecting pawn roles
+
 ## [1.1.2] - 2026-03-29
 
 ### Fixes
